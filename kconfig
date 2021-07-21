@@ -1,0 +1,12 @@
+#!/bin/bash
+CONFIG_LOCATION=~/.kube/config
+CONFIGS_LOCATION=~/.kube/configs
+CONFIG=$(find $CONFIGS_LOCATION -maxdepth 1 -not -type d | sed "s/${CONFIGS_LOCATION//\//\\/}\///g" | fzf)
+
+echo $CONFIG
+if [ -z "$CONFIG" ]
+then
+	echo "No config selected"
+else
+	cp $CONFIGS_LOCATION/$CONFIG $CONFIG_LOCATION
+fi
