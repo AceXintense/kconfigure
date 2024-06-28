@@ -1,12 +1,24 @@
 #!/bin/bash
 CONFIG_LOCATION=~/.kube/config
 CONFIGS_LOCATION=~/.kube/configs
-CONFIG=$(find $CONFIGS_LOCATION -maxdepth 1 -not -type d | sed "s/${CONFIGS_LOCATION//\//\\/}\///g" | fzf)
 
-echo $CONFIG
+# If the user has passed a config to the app then use that if it exists
+if [ ! -z "$1" ]; then
+    CONFIG=$1
+    if [ ! -f "$CONFIGS_LOCATION/$CONFIG" ]; then
+        echo "$CONFIG does not exist in the $CONFIGS_LOCATION"
+        exit;
+    else
+    	cat "$CONFIGS_LOCATION/$CONFIG" > $CONFIG_LOCATION
+    	exit;
+    fi
+fi
+
+
+CONFIG=$(find $CONFIGS_LOCATION -maxdepth 1 -not -type d | sed "s/${CONFIGS_LOCATION//\//\\/}\///g" | fzf)
 if [ -z "$CONFIG" ]
 then
 	echo "No config selected"
 else
-	cp $CONFIGS_LOCATION/$CONFIG $CONFIG_LOCATION
+	cat "$CONFIGS_LOCATION/$CONFIG" > $CONFIG_LOCATION
 fi
